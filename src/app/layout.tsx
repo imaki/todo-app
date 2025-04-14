@@ -2,6 +2,7 @@
 import "@/app/globals.css";
 import AppLayout from "@/components/layout/AppLayout";
 import type { Metadata } from "next";
+import { fontSans, fontMono } from "@/lib/fonts";
 
 export const metadata: Metadata = {
     title: "Multi-Todo App",
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en">
+        <html lang="en" className={`${fontSans.variable} ${fontMono.variable}`}>
         <body>
         <AppLayout>{children}</AppLayout>
         </body>
