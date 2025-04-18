@@ -3,14 +3,15 @@
 import { useState } from "react";
 import { Task, Priority } from "@/types/task";
 import { Button } from "@/components/ui/button";
-import { useTaskStore } from "@/store/taskStore"; // ← ✅ 追加
+import { useTaskStore } from "@/store/taskStore";
 
 export default function TaskInput() {
     const [title, setTitle] = useState("");
     const [priority, setPriority] = useState<Priority>("medium");
     const [deadline, setDeadline] = useState("");
+    const [reminderAt, setReminderAt] = useState(""); // 通知時刻の状態
 
-    const addTask = useTaskStore((state) => state.addTask); // ✅ Zustandから関数取得
+    const addTask = useTaskStore((state) => state.addTask);
 
     const handleSubmit = () => {
         if (!title.trim()) return;
@@ -20,15 +21,18 @@ export default function TaskInput() {
             title,
             priority,
             deadline,
+            reminderAt: reminderAt || null, // 通知時刻を追加
             completed: false,
+            notified: false, // 通知済みかどうか（初期 false）
         };
 
-        addTask(newTask); // ✅ Zustandの関数を直接呼び出す！
+        addTask(newTask);
 
         // フォーム初期化
         setTitle("");
         setDeadline("");
         setPriority("medium");
+        setReminderAt(""); // 通知時刻リセット
     };
 
     return (
@@ -54,6 +58,16 @@ export default function TaskInput() {
                 <option value="medium">Medium</option>
                 <option value="low">Low</option>
             </select>
+
+            {/* 通知時刻設定（これも削除する） */}
+            <input
+                type="datetime-local"
+                className="border w-full p-2"
+                value={reminderAt}
+                onChange={(e) => setReminderAt(e.target.value)}
+                style={{ display: "none" }} // 表示しないように変更
+            />
+
             <Button onClick={handleSubmit}>Add Task</Button>
         </div>
     );

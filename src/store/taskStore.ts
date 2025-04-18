@@ -7,11 +7,12 @@ export type SortBy = "priority" | "deadline";
 
 interface TaskStore {
     tasks: Task[];
-    sortBy: SortBy; // ✅ 並び替え状態
+    sortBy: SortBy;
     addTask: (task: Task) => void;
     toggleTask: (id: string) => void;
     deleteTask: (id: string) => void;
-    setSortBy: (sortBy: SortBy) => void; // ✅ 並び替え変更関数
+    updateTask: (task: Task) => void; // ✅ 🔔 通知用に追加
+    setSortBy: (sortBy: SortBy) => void;
 }
 
 // ✅ Zustandストア本体
@@ -19,7 +20,7 @@ export const useTaskStore = create<TaskStore>()(
     persist(
         (set) => ({
             tasks: [],
-            sortBy: "priority", // ✅ 初期並び順
+            sortBy: "priority",
             addTask: (task) =>
                 set((state) => ({
                     tasks: [...state.tasks, task],
@@ -34,7 +35,13 @@ export const useTaskStore = create<TaskStore>()(
                 set((state) => ({
                     tasks: state.tasks.filter((t) => t.id !== id),
                 })),
-            setSortBy: (sortBy) => set(() => ({ sortBy })), // ✅ 並び順変更
+            updateTask: (task) =>
+                set((state) => ({
+                    tasks: state.tasks.map((t) =>
+                        t.id === task.id ? task : t
+                    ),
+                })),
+            setSortBy: (sortBy) => set(() => ({ sortBy })),
         }),
         {
             name: "tasks", // localStorageのキー
