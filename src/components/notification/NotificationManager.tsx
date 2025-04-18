@@ -3,6 +3,7 @@
 
 import { useEffect } from "react";
 import { useTaskStore } from "@/store/taskStore";
+import { Task } from "@/types/task";
 
 export default function NotificationManager() {
     const tasks = useTaskStore((state) => state.tasks);
@@ -18,30 +19,49 @@ export default function NotificationManager() {
             });
         }
 
-        // ✅ 通知をスケジューリング
-        tasks.forEach((task) => {
-            if (
-                task.reminderAt &&
-                !task.completed &&
-                !task.notified
-            ) {
-                const now = new Date();
-                const reminderTime = new Date(task.reminderAt);
+        // ✅ 通知スケジューリング
+        tasks.forEach((task: Task) => {
+            if (task.notified || task.completed || !task.deadline || task.reminderType === "none") return;
+
+            const deadline = new Date(task.deadline);
+            const now = new Date();
+            let reminderTime: Date | null = null;
+
+            switch (task.reminderType) {
+                case "immediate":
+                    reminderTime = now;
+                    break;
+                case "5min":
+                    reminderTime = new Date(deadline.getTime() - 5 * 60 * 1000);
+                    break;
+                case "10min":
+                    reminderTime = new Date(deadline.getTime() - 10 * 60 * 1000);
+                    break;
+                case "daily":
+                    reminderTime = new Date(deadline);
+                    reminderTime.setHours(9, 0, 0, 0); // 毎日9時など
+                    break;
+                case "weekly":
+                    reminderTime = new Date(deadline);
+                    reminderTime.setHours(10, 0, 0, 0); // 毎週10時など
+                    break;
+                default:
+                    reminderTime = null;
+            }
+
+            if (reminderTime && reminderTime > now) {
                 const delay = reminderTime.getTime() - now.getTime();
 
-                if (delay > 0) {
-                    setTimeout(() => {
-                        new Notification("🔔 Reminder", {
-                            body: `${task.title} の時間になりました！`,
-                        });
+                setTimeout(() => {
+                    new Notification("🔔 Reminder", {
+                        body: `${task.title} の時間になりました！`,
+                    });
 
-                        // ✅ 通知済みフラグを更新
-                        updateTask({ ...task, notified: true });
-                    }, delay);
-                }
+                    updateTask({ ...task, notified: true });
+                }, delay);
             }
         });
-    }, [tasks, updateTask]); // ✅ 依存配列にupdateTaskを追加
+    }, [tasks, updateTask]);
 
     return null;
 }
