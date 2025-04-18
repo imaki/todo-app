@@ -2,13 +2,16 @@
 
 import TaskInput from "@/components/todo/TaskInput";
 import TaskList from "@/components/todo/TaskList";
+import WorldClockSelector from "@/components/clock/WorldClockSelector";
+import WorldClockDisplay from "@/components/clock/WorldClockDisplay";
+
 import { useEffect } from "react";
 import { useTaskStore } from "@/store/taskStore";
 
 export default function HomePage() {
     const tasks = useTaskStore((state) => state.tasks);
-    const setTasksFromStorage = useTaskStore.setState; // Zustandのストア操作
-    const saveTasks = useTaskStore.getState; // 状態取得
+    const setTasksFromStorage = useTaskStore.setState;
+    const saveTasks = useTaskStore.getState;
 
     // ✅ 初回マウント時に localStorage からタスクを読み込む
     useEffect(() => {
@@ -26,9 +29,21 @@ export default function HomePage() {
 
     return (
         <main className="p-6 space-y-6">
-            <h1 className="text-2xl font-bold">📝 ToDo App</h1>
-            <TaskInput />
-            <TaskList />
+            <h1 className="text-2xl font-bold">📝 Multi-Todo App</h1>
+
+            {/* 🌍 世界時計機能をここに追加！ */}
+            <section className="space-y-2">
+                <h2 className="text-xl font-semibold">🌍 World Clock</h2>
+                <WorldClockSelector />
+                <WorldClockDisplay />
+            </section>
+
+            {/* ✅ ToDo 機能 */}
+            <section className="space-y-2">
+                <h2 className="text-xl font-semibold">✅ ToDo List</h2>
+                <TaskInput />
+                <TaskList />
+            </section>
         </main>
     );
 }
