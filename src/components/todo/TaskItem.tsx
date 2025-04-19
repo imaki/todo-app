@@ -1,3 +1,4 @@
+// 📄 src/components/todo/TaskItem.tsx
 "use client";
 
 import { Task } from "@/types/task";
@@ -45,7 +46,9 @@ export default function TaskItem({ task, onToggleAction, onDeleteAction }: Props
                 {showNotificationOptions && (
                     <div className="space-y-2 mt-2">
                         <select
-                            className="border p-2 w-full"
+                            className="border p-2 w-full
+                                       bg-white text-black
+                                       dark:bg-gray-800 dark:text-white dark:border-gray-600"
                             value={reminderTime}
                             onChange={handleReminderChange}
                         >

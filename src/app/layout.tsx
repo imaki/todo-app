@@ -1,4 +1,4 @@
-// src/app/layout.tsx
+// 📄 src/app/layout.tsx
 import "@/app/globals.css";
 import AppLayout from "@/components/layout/AppLayout";
 import type { Metadata } from "next";
@@ -11,8 +11,25 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en" className={`${fontSans.variable} ${fontMono.variable}`}>
-        <body>
+        <html lang="en" className={`${fontSans.variable} ${fontMono.variable}`} suppressHydrationWarning>
+        <head>
+            {/* ✅ ダークモードを最初から反映するためのスクリプト */}
+            <script
+                dangerouslySetInnerHTML={{
+                    __html: `
+              (function() {
+                try {
+                  const theme = localStorage.getItem("theme");
+                  if (theme === "dark") {
+                    document.documentElement.classList.add("dark");
+                  }
+                } catch(e) {}
+              })();
+            `,
+                }}
+            />
+        </head>
+        <body className="bg-background text-foreground">
         <AppLayout>{children}</AppLayout>
         </body>
         </html>

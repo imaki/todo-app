@@ -1,3 +1,4 @@
+// 📄 src/components/todo/TaskInput.tsx
 "use client";
 
 import { useState } from "react";
@@ -21,9 +22,9 @@ export default function TaskInput() {
             title,
             priority,
             deadline,
-            reminderAt: reminderAt || null, // 通知時刻を追加
+            reminderAt: reminderAt || null,
             completed: false,
-            notified: false, // 通知済みかどうか（初期 false）
+            notified: false,
         };
 
         addTask(newTask);
@@ -32,40 +33,47 @@ export default function TaskInput() {
         setTitle("");
         setDeadline("");
         setPriority("medium");
-        setReminderAt(""); // 通知時刻リセット
+        setReminderAt("");
     };
 
     return (
         <div className="space-y-2">
+            {/* タイトル入力 */}
             <input
-                className="border w-full p-2"
+                className="border w-full p-2 dark:bg-gray-800 dark:text-white dark:border-gray-600"
                 placeholder="Task title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
             />
+
+            {/* 締切日入力 */}
             <input
                 type="date"
-                className="border w-full p-2"
+                className="border w-full p-2 dark:bg-gray-800 dark:text-white dark:border-gray-600
+                   [&::-webkit-calendar-picker-indicator]:invert"
                 value={deadline}
                 onChange={(e) => setDeadline(e.target.value)}
             />
+
+            {/* 優先度選択 */}
             <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as Priority)}
-                className="border w-full p-2"
+                className="border w-full p-2
+                   bg-white text-black
+                   dark:bg-gray-800 dark:text-white dark:border-gray-600"
             >
                 <option value="high">High</option>
                 <option value="medium">Medium</option>
                 <option value="low">Low</option>
             </select>
 
-            {/* 通知時刻設定（これも削除する） */}
+            {/* 🔕 通知カレンダー入力（現在は非表示） */}
             <input
                 type="datetime-local"
-                className="border w-full p-2"
+                className="hidden"
                 value={reminderAt}
                 onChange={(e) => setReminderAt(e.target.value)}
-                style={{ display: "none" }} // 表示しないように変更
             />
 
             <Button onClick={handleSubmit}>Add Task</Button>
