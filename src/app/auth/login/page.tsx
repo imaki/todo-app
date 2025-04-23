@@ -3,7 +3,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+    signInWithEmailAndPassword,
+    signInWithPopup,
+    GoogleAuthProvider,
+} from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/button";
@@ -16,20 +20,32 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
 
     const router = useRouter();
+    const googleProvider = new GoogleAuthProvider();
 
     const handleLogin = async () => {
         setError("");
         setLoading(true);
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            router.push("/"); // Redirect to top page after successful login
+            router.push("/");
         } catch (err: unknown) {
             if (err instanceof Error) {
                 setError(err.message);
-                console.error(err.message);
             }
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleGoogleLogin = async () => {
+        setError("");
+        try {
+            await signInWithPopup(auth, googleProvider);
+            router.push("/");
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            }
         }
     };
 
@@ -66,13 +82,23 @@ export default function LoginPage() {
 
             {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
 
-            <Button
-                onClick={handleLogin}
-                disabled={loading || !email || !password}
-                className="w-full"
-            >
-                {loading ? "Signing in..." : "Sign In"}
-            </Button>
+            <div className="space-y-2">
+                <Button
+                    onClick={handleLogin}
+                    disabled={loading || !email || !password}
+                    className="w-full"
+                >
+                    {loading ? "Logging in..." : "Login"}
+                </Button>
+
+                <Button
+                    onClick={handleGoogleLogin}
+                    variant="outline"
+                    className="w-full"
+                >
+                    Login with Google
+                </Button>
+            </div>
         </div>
     );
 }
