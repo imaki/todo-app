@@ -12,10 +12,27 @@ export function RegisterForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [formError, setFormError] = useState("");
     const router = useRouter();
+
+    const isEmailValid = (email: string) =>
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const isPasswordValid = (pw: string) => pw.length >= 6;
 
     const handleRegister = async () => {
         setError("");
+        setFormError("");
+
+        if (!isEmailValid(email)) {
+            setFormError("メールアドレスの形式が不正です");
+            return;
+        }
+
+        if (!isPasswordValid(password)) {
+            setFormError("パスワードは6文字以上にしてください");
+            return;
+        }
+
         try {
             await createUserWithEmailAndPassword(auth, email, password);
             router.push("/");
@@ -32,7 +49,7 @@ export function RegisterForm() {
         <form
             onSubmit={async (e) => {
                 e.preventDefault();
-                await handleRegister(); // ✅ await 追加
+                await handleRegister();
             }}
             className="space-y-4 max-w-sm mx-auto"
         >
@@ -56,6 +73,7 @@ export function RegisterForm() {
                 />
             </div>
 
+            {formError && <p className="text-red-500 text-sm">{formError}</p>}
             {error && <p className="text-red-500 text-sm">{error}</p>}
 
             <Button type="submit" disabled={!email || !password}>

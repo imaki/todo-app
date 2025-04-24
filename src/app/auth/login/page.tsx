@@ -5,25 +5,42 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { auth } from "@/lib/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
-export function RegisterForm() {
+function LoginForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+    const [formError, setFormError] = useState("");
+    const [authError, setAuthError] = useState("");
     const router = useRouter();
 
-    const handleRegister = async () => {
-        setError("");
+    const isEmailValid = (email: string) =>
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const isPasswordValid = (pw: string) => pw.length >= 6;
+
+    const handleLogin = async () => {
+        setFormError("");
+        setAuthError("");
+
+        if (!isEmailValid(email)) {
+            setFormError("メールアドレスの形式が不正です");
+            return;
+        }
+
+        if (!isPasswordValid(password)) {
+            setFormError("パスワードは6文字以上にしてください");
+            return;
+        }
+
         try {
-            await createUserWithEmailAndPassword(auth, email, password);
+            await signInWithEmailAndPassword(auth, email, password);
             router.push("/");
         } catch (err: unknown) {
             if (err instanceof Error) {
-                setError(err.message);
+                setAuthError(err.message);
             } else {
-                setError("登録中に予期せぬエラーが発生しました");
+                setAuthError("ログイン中に予期せぬエラーが発生しました");
             }
         }
     };
@@ -32,7 +49,7 @@ export function RegisterForm() {
         <form
             onSubmit={async (e) => {
                 e.preventDefault();
-                await handleRegister(); // ✅ await 追加
+                await handleLogin();
             }}
             className="space-y-4 max-w-sm mx-auto"
         >
@@ -56,11 +73,20 @@ export function RegisterForm() {
                 />
             </div>
 
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {formError && <p className="text-red-500 text-sm">{formError}</p>}
+            {authError && <p className="text-red-500 text-sm">{authError}</p>}
 
             <Button type="submit" disabled={!email || !password}>
-                登録
+                Login
             </Button>
         </form>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <div className="flex justify-center items-center h-screen">
+            <LoginForm />
+        </div>
     );
 }

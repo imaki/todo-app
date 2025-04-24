@@ -1,6 +1,7 @@
 // 📄 src/app/layout.tsx
 import "@/app/globals.css";
 import AppLayout from "@/components/layout/AppLayout";
+import ClientWrapper from "@/components/ClientWrapper"; // ✅ 追加
 import type { Metadata } from "next";
 import { fontSans, fontMono } from "@/lib/fonts";
 
@@ -30,7 +31,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             />
         </head>
         <body className="bg-background text-foreground">
-        <AppLayout>{children}</AppLayout>
+        <ClientWrapper>
+            <AppLayout>{children}</AppLayout>
+        </ClientWrapper>
         </body>
         </html>
     );
