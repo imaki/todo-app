@@ -13,24 +13,21 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en" className={`${fontSans.variable} ${fontMono.variable}`} suppressHydrationWarning>
-        <head>
-            {/*  ダークモードを最初から反映するためのスクリプト */}
-            <script
-                dangerouslySetInnerHTML={{
-                    __html: `
-              (function() {
-                try {
-                  const theme = localStorage.getItem("theme");
-                  if (theme === "dark") {
-                    document.documentElement.classList.add("dark");
-                  }
-                } catch(e) {}
-              })();
-            `,
-                }}
-            />
-        </head>
         <body className="bg-background text-foreground">
+        {/* ダークモード用スクリプト */}
+        <script
+            dangerouslySetInnerHTML={{
+                __html: `(
+                            function() {
+                                try {
+                                    const theme = localStorage.getItem("theme");
+                                    if (theme === "dark") {
+                                        document.documentElement.classList.add("dark");
+                                    }
+                                } catch(e) {}
+                            })();`,
+            }}
+        />
         <ClientWrapper>
             <AppLayout>{children}</AppLayout>
         </ClientWrapper>
