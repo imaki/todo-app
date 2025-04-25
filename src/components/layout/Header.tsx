@@ -6,7 +6,7 @@ import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { useAuthStore } from "@/store/authStore"; // ✅ Zustand authentication state
+import { useAuthStore } from "@/store/authStore"; // Zustand authentication state
 
 export default function Header() {
     const router = useRouter();

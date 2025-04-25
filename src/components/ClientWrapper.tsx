@@ -14,18 +14,18 @@ export default function ClientWrapper({ children }: { children: ReactNode }) {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
-                // ✅ 実ユーザーを設定
+                // 実ユーザーを設定
                 setUser(user);
             } else {
                 if (process.env.NODE_ENV === "development") {
-                    // ✅ 開発中は仮ログインを通す（型指定あり）
+                    // 開発中は仮ログインを通す（型指定あり）
                     const devUser = {
                         uid: "dev-user-id",
                         email: "dev@example.com",
                     } as User;
                     setUser(devUser);
                 } else {
-                    // ✅ 本番環境ではログイン画面へリダイレクト
+                    //  本番環境ではログイン画面へリダイレクト
                     router.push("/auth/login");
                 }
             }

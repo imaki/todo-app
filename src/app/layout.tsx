@@ -1,7 +1,7 @@
 // 📄 src/app/layout.tsx
 import "@/app/globals.css";
 import AppLayout from "@/components/layout/AppLayout";
-import ClientWrapper from "@/components/ClientWrapper"; // ✅ 追加
+import ClientWrapper from "@/components/ClientWrapper";
 import type { Metadata } from "next";
 import { fontSans, fontMono } from "@/lib/fonts";
 
@@ -14,7 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="en" className={`${fontSans.variable} ${fontMono.variable}`} suppressHydrationWarning>
         <head>
-            {/* ✅ ダークモードを最初から反映するためのスクリプト */}
+            {/*  ダークモードを最初から反映するためのスクリプト */}
             <script
                 dangerouslySetInnerHTML={{
                     __html: `

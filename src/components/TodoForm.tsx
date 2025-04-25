@@ -1,79 +1,58 @@
-// 📄 src/components/todo/TaskInput.tsx
+// 📄 src/components/TodoForm.tsx
 "use client";
 
 import { useState } from "react";
-import { Priority } from "@/types/task";
+import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/authStore";
-import { addTodo } from "@/lib/firestoreUtils"; // Firestore保存関数
+import { addTodo } from "@/lib/firestoreUtils";
+import { Priority } from "@/types/todo";
 import { formatISO } from "date-fns";
 
-export default function TaskInput() {
+export default function TodoForm() {
     const [title, setTitle] = useState("");
     const [priority, setPriority] = useState<Priority>("medium");
     const [deadline, setDeadline] = useState("");
-    const [reminderAt, setReminderAt] = useState("");
-
     const user = useAuthStore((state) => state.user);
 
-    const handleSubmit = async () => {
-        if (!title.trim() || !user?.uid) return;
+    const handleAdd = async () => {
+        if (!title || !deadline || !user?.uid) return;
 
         await addTodo(user.uid, {
             title,
             priority,
             deadline,
-            reminderAt: reminderAt || null,
             completed: false,
-            notified: false,
             createdAt: formatISO(new Date()),
         });
 
-        // フォーム初期化
         setTitle("");
         setDeadline("");
         setPriority("medium");
-        setReminderAt("");
     };
 
     return (
         <div className="space-y-2">
-            <input
-                className="border w-full p-2 dark:bg-gray-800 dark:text-white dark:border-gray-600"
+            <Input
                 placeholder="Task title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
             />
-
-            <input
-                type="date"
-                className="border w-full p-2 dark:bg-gray-800 dark:text-white dark:border-gray-600
-           [&::-webkit-calendar-picker-indicator]:invert"
+            <Input
+                type="datetime-local"
                 value={deadline}
                 onChange={(e) => setDeadline(e.target.value)}
             />
-
             <select
+                className="w-full border rounded p-2"
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as Priority)}
-                className="border w-full p-2
-           bg-white text-black
-           dark:bg-gray-800 dark:text-white dark:border-gray-600"
             >
                 <option value="high">High</option>
                 <option value="medium">Medium</option>
                 <option value="low">Low</option>
             </select>
-
-            {/* 🔕 通知カレンダー（今はhiddenのまま） */}
-            <input
-                type="datetime-local"
-                className="hidden"
-                value={reminderAt}
-                onChange={(e) => setReminderAt(e.target.value)}
-            />
-
-            <Button onClick={handleSubmit}>Add Task</Button>
+            <Button onClick={handleAdd}>Add Task</Button>
         </div>
     );
 }

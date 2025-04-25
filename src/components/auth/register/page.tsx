@@ -1,4 +1,4 @@
-// ✅ このファイルは: src/app/auth/register/page.tsx
+//  このファイルは: src/app/auth/register/page.tsx
 
 import { RegisterForm } from "@/components/auth/register/RegisterForm";
 
