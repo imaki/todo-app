@@ -24,12 +24,12 @@ function LoginForm() {
         setAuthError("");
 
         if (!isEmailValid(email)) {
-            setFormError("メールアドレスの形式が不正です");
+            setFormError("Invalid email format");
             return;
         }
 
         if (!isPasswordValid(password)) {
-            setFormError("パスワードは6文字以上にしてください");
+            setFormError("Password must be at least 6 characters long");
             return;
         }
 
@@ -40,7 +40,7 @@ function LoginForm() {
             if (err instanceof Error) {
                 setAuthError(err.message);
             } else {
-                setAuthError("ログイン中に予期せぬエラーが発生しました");
+                setAuthError("An unexpected error occurred during login");
             }
         }
     };

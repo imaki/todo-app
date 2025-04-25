@@ -1,4 +1,3 @@
-// 📄 src/components/layout/Header.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -7,14 +6,14 @@ import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { useAuthStore } from "@/store/authStore"; // ✅ Zustandの認証状態取得
+import { useAuthStore } from "@/store/authStore"; // ✅ Zustand authentication state
 
 export default function Header() {
     const router = useRouter();
-    const user = useAuthStore((state) => state.user); // ログイン状態取得
+    const user = useAuthStore((state) => state.user); // get login status
     const [isDark, setIsDark] = useState(false);
 
-    // 初期テーマ取得
+    // Get initial theme
     useEffect(() => {
         const theme = localStorage.getItem("theme");
         if (theme === "dark") {
@@ -23,7 +22,7 @@ export default function Header() {
         }
     }, []);
 
-    // テーマ切替処理
+    // Toggle theme handler
     const toggleTheme = () => {
         const html = document.documentElement;
         if (html.classList.contains("dark")) {
@@ -37,7 +36,7 @@ export default function Header() {
         }
     };
 
-    // ログアウト処理
+    // Logout handler
     const handleLogout = async () => {
         await signOut(auth);
         router.push("/auth/login");
@@ -51,21 +50,21 @@ export default function Header() {
                     {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </Button>
 
-                {/* ログイン状態によって表示内容を変更 */}
+                {/* Conditional UI based on login status */}
                 {user ? (
                     <>
                         <span className="text-sm text-gray-500">{user.email}</span>
                         <Button onClick={handleLogout} variant="outline">
-                            ログアウト
+                            Logout
                         </Button>
                     </>
                 ) : (
                     <>
                         <Button onClick={() => router.push("/auth/login")} variant="default">
-                            ログイン
+                            Login
                         </Button>
                         <Button onClick={() => router.push("/auth/register")} variant="secondary">
-                            登録
+                            Register
                         </Button>
                     </>
                 )}
