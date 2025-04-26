@@ -8,32 +8,31 @@ import WorldClockDisplay from "@/components/clock/WorldClockDisplay";
 import NotificationManager from "@/components/notification/NotificationManager";
 
 import { useEffect } from "react";
-import { useTaskStore } from "@/store/taskStore";
+import { useTodoStore } from "@/store/todoStore"; // ✅ todoStoreを使用
 import { useAuthStore } from "@/store/authStore";
-import { useTodos } from "@/hooks/useTodos"; // 🔥 Firestore同期用フック
+import { useTodos } from "@/hooks/useTodos"; // ✅ Firestore同期
 
 export default function HomePage() {
-    const tasks = useTaskStore((state) => state.tasks);
-    const setTasksFromStorage = useTaskStore.setState;
+    const todos = useTodoStore((state) => state.todos);
+    const setTodos = useTodoStore((state) => state.setTodos); // ✅ setTodos に直す！setStateじゃない
     const user = useAuthStore((state) => state.user);
 
-    // Firestoreとの同期を開始（ログインユーザーがいる場合）
-    useTodos(); // 🔥 ← これがFirestoreとのリアルタイム同期
+    useTodos(); // Firestore同期開始
 
-    // ※下記のlocalStorage処理はFirestoreと切り替えるなら不要になるが、ログインなし状態でも使いたいなら残してもOK
+    // 未ログイン時のみ localStorage を使用
     useEffect(() => {
-        const stored = localStorage.getItem("tasks");
+        const stored = localStorage.getItem("todos"); // ✅ localStorageキー名も "todos" に統一
         if (stored && !user) {
             const parsed = JSON.parse(stored);
-            setTasksFromStorage({ tasks: parsed });
+            setTodos(parsed); // ✅ { todos: parsed } ではない！parsedだけ渡す
         }
-    }, [setTasksFromStorage, user]);
+    }, [setTodos, user]);
 
     useEffect(() => {
         if (!user) {
-            localStorage.setItem("tasks", JSON.stringify(tasks));
+            localStorage.setItem("todos", JSON.stringify(todos)); // ✅ 同じく "todos"
         }
-    }, [tasks, user]);
+    }, [todos, user]);
 
     return (
         <main className="p-6 space-y-6">
@@ -55,4 +54,3 @@ export default function HomePage() {
         </main>
     );
 }
-

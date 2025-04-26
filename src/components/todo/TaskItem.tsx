@@ -1,4 +1,4 @@
-// 📄 src/components/todo/TaskItem.tsx
+//src/components/todo/TaskItem.tsx
 "use client";
 
 import { Task } from "@/types/task";
@@ -8,60 +8,54 @@ import { useAuthStore } from "@/store/authStore";
 import { updateTodo } from "@/lib/firestoreUtils";
 
 type Props = {
-    task: Task;
+    todo: Task;
     onToggleAction: (id: string) => void;
     onDeleteAction: (id: string) => void;
 };
 
-export default function TaskItem({ task, onToggleAction, onDeleteAction }: Props) {
+export default function TaskItem({ todo, onToggleAction, onDeleteAction }: Props) {
     const [showNotificationOptions, setShowNotificationOptions] = useState(false);
-    const [reminderTime, setReminderTime] = useState<string>(task.reminderAt || "");
+    const [reminderTime, setReminderTime] = useState<string>(todo.reminderAt || "");
     const user = useAuthStore((state) => state.user);
 
-    // 通知オプション切り替え表示
     const handleNotificationClick = () => {
         setShowNotificationOptions(!showNotificationOptions);
     };
 
-    // 通知オプション選択 → Firestoreに保存
     const handleReminderChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value;
         setReminderTime(value);
 
         if (user?.uid) {
-            await updateTodo(user.uid, task.id, {
+            await updateTodo(user.uid, todo.id, {
                 reminderAt: value === "none" ? null : value,
-                notified: false, // 再通知フラグをリセット
+                notified: false,
             });
         }
     };
 
     return (
-        <div className="border p-2 rounded flex justify-between items-center">
+        <li className="border p-2 rounded flex justify-between items-center">
             <div>
-                <p className={task.completed ? "line-through text-gray-400" : ""}>
-                    {task.title}
-                </p>
-                <p className="text-xs text-gray-500">
-                    {task.priority} | {task.deadline}
-                </p>
-                {task.reminderAt && (
-                    <p className="text-xs text-green-500">🔔 {task.reminderAt}</p>
+                <p className={todo.completed ? "line-through text-gray-400" : ""}>{todo.title}</p>
+                <p className="text-xs text-gray-500">{todo.priority} | {todo.deadline}</p>
+                {todo.reminderAt && (
+                    <p className="text-xs text-green-500">🔔 {todo.reminderAt}</p>
                 )}
             </div>
 
             <div className="flex flex-col items-end gap-2">
                 <div className="flex gap-2">
-                    <Button onClick={() => onToggleAction(task.id)}>✔</Button>
-                    <Button onClick={() => onDeleteAction(task.id)} variant="destructive">🗑</Button>
+                    <Button onClick={() => onToggleAction(todo.id)}>✔</Button>
+                    <Button onClick={() => onDeleteAction(todo.id)} variant="destructive">🗑</Button>
                     <Button onClick={handleNotificationClick}>🔔</Button>
                 </div>
 
                 {showNotificationOptions && (
                     <select
                         className="border p-1 w-full mt-1
-                       bg-white text-black
-                       dark:bg-gray-800 dark:text-white dark:border-gray-600"
+            bg-white text-black
+            dark:bg-gray-800 dark:text-white dark:border-gray-600"
                         value={reminderTime}
                         onChange={handleReminderChange}
                     >
@@ -74,6 +68,6 @@ export default function TaskItem({ task, onToggleAction, onDeleteAction }: Props
                     </select>
                 )}
             </div>
-        </div>
+        </li>
     );
 }

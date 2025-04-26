@@ -1,3 +1,5 @@
+// 1. 📄 src/types/todo.ts
+// ================================
 export type Priority = "high" | "medium" | "low";
 
 export type Todo = {
@@ -7,6 +9,7 @@ export type Todo = {
     deadline: string;
     completed: boolean;
     createdAt: string;
-    reminderAt?: string | null; // 🔔 通知オプション（追加）
-    notified?: boolean;         // 🔔 通知済みフラグ（追加）
+    reminderAt?: string | null;
+    notified?: boolean;
 };
+

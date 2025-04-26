@@ -1,4 +1,4 @@
-// 📄 src/lib/firestoreUtils.ts
+// ✅ src/lib/firestoreUtils.ts（完全修正版）
 
 import { db } from "@/lib/firebase";
 import {
@@ -14,40 +14,35 @@ import {
 
 import { Todo } from "@/types/todo";
 
-// Firestoreにタスクを追加
 export const addTodo = async (uid: string, todo: Omit<Todo, "id">) => {
     try {
         const userTodosRef = collection(db, "users", uid, "todos");
-        await addDoc(userTodosRef, todo);
+        const docRef = await addDoc(userTodosRef, {
+            ...todo,
+            createdAt: todo.createdAt || new Date().toISOString(),
+            reminderAt: todo.reminderAt ?? null,
+            notified: todo.notified ?? false,
+        });
+        await updateDoc(docRef, { id: docRef.id }); // ✅ これが超重要！！！
     } catch (error) {
         console.error("Error adding todo:", error);
     }
 };
 
-// Firestoreのタスクをリアルタイムで取得
-export const subscribeToTodos = (
-    uid: string,
-    callback: (todos: Todo[]) => void
-) => {
+export const subscribeToTodos = (uid: string, callback: (todos: Todo[]) => void) => {
     const userTodosRef = collection(db, "users", uid, "todos");
     const q = query(userTodosRef, orderBy("createdAt", "desc"));
 
     return onSnapshot(q, (snapshot) => {
         const todos: Todo[] = snapshot.docs.map((doc) => ({
             id: doc.id,
-            ...doc.data(),
-        })) as Todo[];
-
+            ...(doc.data() as Omit<Todo, "id">),
+        }));
         callback(todos);
     });
 };
 
-// Firestoreのタスクを更新
-export const updateTodo = async (
-    uid: string,
-    todoId: string,
-    data: Partial<Todo>
-) => {
+export const updateTodo = async (uid: string, todoId: string, data: Partial<Todo>) => {
     try {
         const todoDocRef = doc(db, "users", uid, "todos", todoId);
         await updateDoc(todoDocRef, data);
@@ -56,7 +51,6 @@ export const updateTodo = async (
     }
 };
 
-// Firestoreのタスクを削除
 export const deleteTodo = async (uid: string, todoId: string) => {
     try {
         const todoDocRef = doc(db, "users", uid, "todos", todoId);

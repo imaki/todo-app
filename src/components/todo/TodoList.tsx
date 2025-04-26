@@ -2,23 +2,34 @@
 "use client";
 
 import { useTodoStore } from "@/store/todoStore";
+import TaskItem from "./TaskItem";
+import { useAuthStore } from "@/store/authStore";
+import { updateTodo, deleteTodo } from "@/lib/firestoreUtils";
 
 export default function TodoList() {
     const todos = useTodoStore((state) => state.todos);
-    console.log("Zustandから受け取ったtodos:", todos); // ここで配列が正しく受け取れているか確認
+    const user = useAuthStore((state) => state.user);
+
+    const handleToggle = (id: string, current: boolean) => {
+        if (!user?.uid) return;
+        updateTodo(user.uid, id, { completed: !current });
+    };
+
+    const handleDelete = (id: string) => {
+        if (!user?.uid) return;
+        deleteTodo(user.uid, id);
+    };
 
     return (
-        <div className="p-4 border bg-white dark:bg-gray-800 text-black dark:text-white">
-            <h2>タスク一覧 (デバッグ表示)</h2>
-            <ul className="space-y-2">
-                {/* todos 配列をマップしてリスト表示 */}
-                {todos.map((todo) => (
-                    <li key={todo.id}>
-                        {/* タスクデータを JSON 形式で表示 */}
-                        <pre>{JSON.stringify(todo, null, 2)}</pre>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <ul className="space-y-2">
+            {todos.map((todo) => (
+                <TaskItem
+                    key={todo.id}
+                    todo={todo}
+                    onToggleAction={() => handleToggle(todo.id, todo.completed)}
+                    onDeleteAction={() => handleDelete(todo.id)}
+                />
+            ))}
+        </ul>
     );
 }
