@@ -8,6 +8,8 @@ import { fontSans, fontMono } from "@/lib/fonts";
 export const metadata: Metadata = {
     title: "Multi-Todo App",
     description: "タスク・時計・メモ・通知の便利アプリ",
+    manifest: "/manifest.json",     // ✅ PWAの設定ファイル
+    themeColor: "#0f172a",          // ✅ スマホやPWAで使うテーマカラー
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
