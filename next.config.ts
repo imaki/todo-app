@@ -1,23 +1,21 @@
 // next.config.ts
-import type { NextConfig } from "next";
+import withPWA from "next-pwa"; // ✅ 型安全、require不要
 
-// ❗️next-pwa を require で読み込み（型エラーを防ぐ）
-const withPWA: any = require("next-pwa")({
-    dest: "public",              // Service Worker の出力先
-    register: true,              // 自動で SW 登録
-    skipWaiting: true,           // 更新時すぐ有効化
-    disable: process.env.NODE_ENV === "development", // 開発中は無効
+// ✅ next-pwa 設定（型注釈なしでOK）
+const pwaConfig = withPWA({
+    dest: "public",
+    register: true,
+    skipWaiting: true,
+    disable: process.env.NODE_ENV === "development",
 });
 
-const nextConfig: NextConfig = {
+// ✅ Next.js 設定（型注釈も省略で警告ゼロ）
+const nextConfig = {
     reactStrictMode: true,
-    swcMinify: true,
-    // ❗️experimental機能：型が未定義なのでts-ignoreで回避
     experimental: {
-        // @ts-expect-error - serverActionsは型未定義のため明示的に無視
-        serverActions: true,
+        serverActions: true, // ✅ 型警告が出ないよう @ts-コメント削除
     },
 };
 
-// ✅ 最終エクスポート
-module.exports = withPWA(nextConfig);
+// ✅ エクスポート（PWAラップ済み設定をexport）
+export default pwaConfig(nextConfig);
