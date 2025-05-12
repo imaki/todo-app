@@ -114,4 +114,5 @@ MIT © imaki
 
 
 ヽ(•‿•)ノ Thanks for reading!
+ 
 (◕‿◕✿) Feel free to fork & contribute!
